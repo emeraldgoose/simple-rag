@@ -1,4 +1,4 @@
-## Simple-RAG
+# Simple-RAG
 
 ## Requirements
 ```
