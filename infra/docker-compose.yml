@@ -1,0 +1,43 @@
+version: '3'
+services:
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    hostname: opensearch
+    environment:
+      - discovery.type=single-node
+      - node.name=opensearch
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Opensearch1!
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        bin/opensearch-plugin install analysis-nori
+        ./opensearch-docker-entrypoint.sh
+        opensearch
+    volumes:
+      - opensearch:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600
+    networks:
+      - opensearch-net
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:latest
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch:9200"]'
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "Opensearch1!"
+    depends_on:
+      - opensearch
+    networks:
+      - opensearch-net
+
+volumes:
+  opensearch:
+
+networks:
+  opensearch-net:
